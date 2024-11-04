@@ -1,115 +1,95 @@
 <template>
   <div class="m-content">
     <div class="header">
-      <div class="header-content">
-        <h3>欢迎来到孙佳豪的博客</h3>
+      <div class="header-right">
         <el-avatar :size="50" :src="user.avatar"></el-avatar>
-        <div>{{ user.username }}</div>
+        <div class="username">{{ user.username }}</div>
+        <div class="links">
+          <el-link href="/blogs">主页</el-link>
+          <el-link type="success" v-show="hasLogin" href="/blog/add">发表博客</el-link>
+          <el-link type="primary" v-show="!hasLogin" href="/login">登录</el-link>
+          <el-link type="primary" v-show="!hasLogin" href="/register">注册</el-link>
+          <el-link type="danger" v-show="hasLogin" @click="logout">退出</el-link>
+        </div>
       </div>
     </div>
-
-    <div class="side-trigger" @mouseover="showSidebar = true"></div>
-
-    <transition name="slide">
-      <div class="sidebar" v-if="showSidebar" @mouseleave="showSidebar = false">
-        <el-link href="/blogs">主页</el-link>
-        <el-link type="success" href="/blog/add">发表博客</el-link>
-        <el-link type="primary" v-show="!hasLogin" href="/login">登录</el-link>
-        <el-link type="danger" v-show="hasLogin" @click="logout">退出</el-link>
-      </div>
-    </transition>
   </div>
 </template>
 
+
 <script>
-  export default {
-    name: "Header",
-    data() {
-      return {
-        user: {
-          username: '请先登录',
-          avatar: 'https://himg.bdimg.com/sys/portraitn/item/58cd7877383531303030cac9'
-        },
-        hasLogin: false,
-        showSidebar: false
-      }
-    },
-    methods: {
-      logout() {
-        const _this = this
-        _this.$axios.get("/logout", {
-          headers: {
-            "Authorization": localStorage.getItem("token")
-          }
-        }).then(res => {
-          _this.$store.commit("REMOVE_INFO")
-          _this.$router.push("/login")
-        })
-      }
-    },
-    created() {
-      if(this.$store.getters.getUser.username) {
-        this.user.username = this.$store.getters.getUser.username
-        this.user.avatar = this.$store.getters.getUser.avatar
-        this.hasLogin = true
-      }
+export default {
+  name: "Header",
+  data() {
+    return {
+      user: {
+        username: '请先登录',
+        avatar: ''
+      },
+      hasLogin: false,
+    }
+  },
+  methods: {
+    logout() {
+      const _this = this;
+      _this.$store.commit("REMOVE_INFO");
+      _this.hasLogin = false;
+      _this.user.avatar=''
+      _this.user.username='请先登录'
+      _this.$router.push('/login')
+    }
+  },
+  created() {
+    if (this.$store.getters.getUser.username) {
+      this.user.username = this.$store.getters.getUser.username;
+      this.user.avatar = this.$store.getters.getUser.avatar;
+      this.hasLogin = true;
     }
   }
+};
 </script>
 
+
 <style scoped>
-  .m-content {
-    position: relative;
-  }
-  .header {
-    width: 100%;
-    height: 200px;
-    background-image: url('../assets/background.jpg');
-    background-size: cover;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    text-align: center;
-  }
-  .header-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .side-trigger {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 10px;
-    height: 100%;
-    z-index: 1000;
-    cursor: pointer;
-  }
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 200px;
-    height: 100%;
-    background: linear-gradient(to bottom right, blue, purple);
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    z-index: 999;
-  }
-  .sidebar a {
-    color: white;
-    margin: 10px 0;
-    font-size: 20px;
-  }
-  .slide-enter-active, .slide-leave-active {
-    transition: all 1.5s;
-  }
-  .slide-enter, .slide-leave-to {
-    transform: translateX(-100%);
-  }
+.m-content {
+  position: relative;
+  margin-left: 75%;
+  margin-top: 2%;
+  margin-bottom: -5%;
+}
+
+
+.header-right {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.username {
+  color: mediumpurple;
+  font-size: 20px;
+  margin-left: 10px;
+  margin-right: 10px; /* 增加右侧间距 */
+}
+
+.links {
+  display: flex;
+  align-items: center;
+}
+
+.links .el-link {
+  color: dodgerblue;
+  margin: 0 10px; /* 左右间距 */
+  font-size: 20px;
+}
+
+.links .el-link :hover {
+  color: mediumpurple;
+}
+
+.slide-enter-active, .slide-leave-active {
+  transition: all 1.5s;
+}
+
+
 </style>

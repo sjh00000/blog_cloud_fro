@@ -20,7 +20,7 @@ export default {
   methods: {
     fetchTags() {
       const _this = this;
-      _this.$axios.get('/tags').then((res) => {
+      _this.$axios.get('/blog/tags').then((res) => {
         _this.tags = res.data.data;
       });
     },
@@ -36,16 +36,17 @@ export default {
 
 <style scoped>
 .tags-container {
-  width: 200px;
   padding: 10px;
-  background: rgba(255, 255, 255, 0.8); /* 半透明白色背景 */
+  background: #e0f2ff; /* 半透明白色背景 */
   backdrop-filter: blur(10px); /* 内容背景模糊效果 */
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: inline-block; /* 使容器根据内容自动扩展 */
+  height: 100%;
 }
 
 .tags-container h3 {
-  color: purple;
+  color: mediumpurple;
   text-align: center;
   margin-bottom: 10px;
 }
@@ -59,14 +60,19 @@ export default {
 .tags-container li {
   cursor: pointer;
   margin-bottom: 8px;
-  color: blue; /* 标签字体颜色为蓝色 */
+  color: mediumpurple; /* 标签字体颜色为蓝色 */
   padding: 5px;
   transition: background 0.3s, color 0.3s;
+  display: block; /* 确保每个标签占据一行 */
+  white-space: nowrap; /* 防止标签换行 */
+  overflow: hidden; /* 隐藏超出部分 */
+  text-overflow: ellipsis; /* 显示省略号 */
 }
 
+
 .tags-container li:hover {
-  background: purple;
-  color: white; /* 悬浮时字体颜色为白色 */
+  background: #e0f2ff;
+  color: blue; /* 悬浮时字体颜色为白色 */
   border-radius: 5px;
   transform: scale(1.05); /* 悬浮时放大效果 */
 }

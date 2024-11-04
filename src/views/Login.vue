@@ -1,24 +1,25 @@
 <template>
+  <Header></Header>
   <div>
 
     <el-container>
-      <el-header>
-        <div class="image-container">
-          <img class="mlogo" src="../assets/background.jpg" alt="背景图片">
-        </div>
-      </el-header>
       <el-main>
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-          <el-form-item label="用户名" prop="username">
-            <el-input v-model="ruleForm.username"></el-input>
+          <el-form-item>
+            <el-image :src="require('@/assets/logo.png')" style="border-radius: 50%;width: 150px; height: 150px;"
+                      class="el-image"
+            ></el-image>
           </el-form-item>
-          <el-form-item label="密码" prop="password">
-            <el-input type="password" v-model="ruleForm.password"></el-input>
+          <el-form-item label="用户名" prop="username" class="el-form-1">
+            <input v-model="ruleForm.username" class="input-title">
+          </el-form-item>
+          <el-form-item label="密码" prop="password" class="el-form-1">
+            <input type="password" v-model="ruleForm.password" class="input-title">
           </el-form-item>
 
-          <el-form-item>
-            <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
-            <el-button @click="resetForm('ruleForm')">重置</el-button>
+          <el-form-item class="el-form-button">
+            <el-button type="primary" @click="submitForm('ruleForm')" class="click-button">登录</el-button>
+            <el-button @click="resetForm('ruleForm')" class="click-button">重置</el-button>
           </el-form-item>
         </el-form>
 
@@ -29,13 +30,16 @@
 </template>
 
 <script>
+  import Header from "@/components/Header.vue";
+
   export default {
     name: "Login",
+    components: { Header },
     data() {
       return {
         ruleForm: {
-          username: 'sunjiahao',
-          password: '123456'
+          username: '',
+          password: ''
         },
         rules: {
           username: [
@@ -43,7 +47,7 @@
             { min: 3, max: 15, message: '长度在 3 到 15 个字符', trigger: 'blur' }
           ],
           password: [
-            { required: true, message: '请选择密码', trigger: 'change' }
+            { required: true, message: '请输入密码', trigger: 'change' }
           ]
         }
       };
@@ -53,14 +57,15 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             const _this = this
-            this.$axios.post('/login', this.ruleForm).then(res => {
+            this.$axios.post('/account/login', this.ruleForm).then(res => {
 
-              console.log(res.data)
-              const jwt = res.headers['authorization']
+              console.log(res)
+              const accessToken = res.headers['authorization_access']
+              const refreshToken = res.headers['authorization_refresh']
               const userInfo = res.data.data
 
               // 把数据共享出去
-              _this.$store.commit("SET_TOKEN", jwt)
+              _this.$store.commit("SET_TOKEN", [accessToken,refreshToken])
               _this.$store.commit("SET_USERINFO", userInfo)
 
               // 获取
@@ -83,58 +88,43 @@
 </script>
 
 <style scoped>
-  .el-header, .el-footer {
-    background-color: #B3C0D1;
-    color: #333;
-    text-align: center;
-    line-height: 60px;
-    position: relative;
-  }
 
-  .el-aside {
-    background-color: #D3DCE6;
-    color: #333;
-    text-align: center;
-    line-height: 200px;
-  }
-
-  .el-main {
-    /*background-color: #E9EEF3;*/
-    color: #333;
-    text-align: center;
-    line-height: 160px;
-  }
-
-  body > .el-container {
-    margin-bottom: 40px;
-  }
-
-  .el-container:nth-child(5) .el-aside,
-  .el-container:nth-child(6) .el-aside {
-    line-height: 260px;
-  }
-
-  .el-container:nth-child(7) .el-aside {
-    line-height: 320px;
-  }
-
-  .mlogo {
-    height: 60%;
-    margin-top: 10px;
+  .input-title{
+    width: 70%;
+    margin-left: 2%;
+    padding: 15px;
+    border: 1px solid mediumpurple;
+    border-radius: 15px;
+    transition: border-color 0.3s, box-shadow 0.3s;
   }
 
   .demo-ruleForm {
     max-width: 500px;
-    margin: 0 auto;
+    margin: 15% auto 0;
   }
 
-  .mlogo {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* 保持图片比例，同时填充整个容器 */
-    position: absolute;
-    top: 0;
-    left: 0;
+  .el-form-1{
+    margin-bottom: 10%;
+  }
+
+  .el-form-button{
+    margin-left: 10%;
+  }
+
+  .click-button{
+    width: 33%;
+    margin-left: -8%;
+    margin-right: 40px;
+    padding: 15px;
+    border: 2px solid mediumpurple;
+    border-radius: 15px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .el-image{
+    position: fixed;
+    top: 10%;
+    left: 46%;
   }
 
 </style>
